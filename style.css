@@ -1,0 +1,45 @@
+a {
+  background-color: aquamarine;
+  font-size: x-large;
+  color: blue;
+  text-decoration: none;
+}
+a:hover{
+    color:bisque;
+    text-decoration: line-through;
+}
+link:visited{
+    text-decoration: overline;
+}
+.class {
+    font-size: 100px;
+}
+
+header{
+    background-color: blueviolet;
+    text-align: center;
+}
+
+html, body{
+    height: 100%;
+}
+main{
+    width: 100%;
+    height: 100%;
+    background-color: azure;
+}
+
+footer{
+    width: 100%;
+    height: 20px;
+    background-color: brown;
+}
+main > img{
+        height: 50%;
+}
+main>p{
+    width: 300px;
+    padding: 30px;
+    border: 3cm solid black;
+
+}
