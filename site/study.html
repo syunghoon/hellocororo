@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Study</title>
+  <style>
+    img{
+      border: 3px solid aqua;
+    }
+    p {
+      border:1px solid #ccc;
+      font-family: KyoboHandwriting2021sjy;
+    }
+    #static {
+      position:static;
+    }
+    #relative-1{
+      position:relative;
+    }
+    #relative-2 {
+      position:relative; 
+      left:100px;  
+      top:-50px;   
+    }
+    #fixed {
+      position:fixed;  
+      right:30px;  
+      top:30px;
+    }
+    #absolute{
+      position: absolute;
+      font-size: 120px;
+      color: aqua;
+      right: 100px;
+      bottom: 100px;
+    }
+  </style>
+  <link rel="stylesheet" href="../style.css">
+</head>
+<body>
+  <header>
+    <a href="../index.html">Main</a>
+  </header>
+    <img src="./img/04.jpg" alt="" id="static" width="10%">
+    <br>
+  <img src="./img/04.jpg" alt="" id="relative-1" width="10%">
+  <br>
+  <img src="./img/04.jpg" alt="" id="relative-2" width="10%">
+  <br>
+  <img src="./img/04.jpg" alt="" id="fixed" width="10%">
+  <p>My name is Bandal!</p>
+  <p id="absolute">absolute</p>
+</body>
+</html>
