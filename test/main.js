@@ -1,23 +1,3 @@
-//엔트리 포인트: 웹페이지가 완전히 준비된 후 사용할 수 있도록
-//글로벌 스코프
-const audioContext = new AudioContext();
-
-const onLoad = async () => {
-  const buttonE1 = document.getElementById('start-audio');
-  buttonE1.disabled = false;
-  buttonE1.addEventListener('click', async () => {
-    const directoryHandle = await window.showDirectoryPicker();
-    await initializeDrumMachine(audioContext, directoryHandle);
-    audioContext.resume();
-    buttonE1.disabled = true;
-    buttonE1.textContent = '재생중...';
-  }, false);
-};
-
-window.addEventListener('load', onLoad);
-
-
-
 // DrumCell 클래스 생성
 class DrumCell {
   constructor(outputNode, audioBuffer) {
@@ -36,34 +16,27 @@ class DrumCell {
 }
 
 //파일로딩 유틸리티 함수
-const getAudioBufferByFileName = async (audioContext, fileName, directoryHandle) => {
-  const fileHandle = await directtoryHandle.getFileHandle(entry.name)
+const getAudioBufferByFileName = async (
+    audioContext, fileName, directoryHandle) => {
+  const fileHandle = await directoryHandle.getFileHandle(fileName);
   const file = await fileHandle.getFile();
   const arrayBuffer = await file.arrayBuffer();
   return await audioContext.decodeAudioData(arrayBuffer);
-}
-
-//디코딩
-const directoryHandle = await window.showDirectoryPicker();
-const drumCellMap = {};
-for await (const entry of directoryHandle.values()) {
-  if (entry.name.startsWith('drum') && entry.name.endsWith('mp3')) {
-    const audioBuffer = await getAudioBufferByFileName(audioContext, entry.name, directoryHandle);
-    drumCellMap[entry.name] = new DrumCell(outputNode, audioBuffer);
-  }
-}
+};
 
 //buildDrumCellMap 함수
 const buildDrumCellMap = async (outputNode, directoryHandle) => {
   const drumCellMap = {};
   for await (const entry of directoryHandle.values()) {
     if (entry.name.startsWith('drum') && entry.name.endsWith('mp3')) {
-      const audioBuffer = await getAudioBufferByFileName(audioContext, entry.name, directoryHandle);
+      const audioBuffer = await getAudioBufferByFileName(
+          outputNode.context, entry.name, directoryHandle);
       drumCellMap[entry.name] = new DrumCell(outputNode, audioBuffer);
     }
   }
+
   return drumCellMap;
-}
+};
 
 //키입력처리
 const bindKeyToDrumCellMap = (drumCellMap) => {
@@ -71,22 +44,23 @@ const bindKeyToDrumCellMap = (drumCellMap) => {
   const drumCells = Object.values(drumCellMap);
   const keyToDrumCellMap = {};
   for (let i = 0; i < drumCells.length; ++i) {
-    keyToDrumCellMap[keys[i]] = drumCells[i]
+    keyToDrumCellMap[keys[i]] = drumCells[i];
   }
-}
 
-window.addEventListener('keydown', (event) => {
-  if (event.key in keyToDrumCellMap) {
-    keyToDrumCellMap[event.key].playSample();
-  }
-})
+  window.addEventListener('keydown', (event) => {
+    if (event.key in keyToDrumCellMap) {
+      keyToDrumCellMap[event.key].playSample();
+    }
+  });
+};
 
 //버스 이펙트 추가하기
 const buildMainBus = async (audioContext, directoryHandle) => {
   const compressor = new DynamicsCompressorNode(audioContext);
-  const irBuffer = await getAudioBufferByFileName(audioContext,'ir-hall.mp3',directoryHandle);
+  const irBuffer = await getAudioBufferByFileName(
+      audioContext,'ir-hall.mp3',directoryHandle);
   const convolver = new ConvolverNode(audioContext, {buffer: irBuffer});
-  const reverbGain = new GainNode(auidoContext, {gain: 0.25})
+  const reverbGain = new GainNode(audioContext, {gain: 0.25});
 
   compressor.connect(audioContext.destination);
   convolver.connect(reverbGain).connect(audioContext.destination);
@@ -102,3 +76,19 @@ const initializeDrumMachine = async (audioContext) => {
   const drumCellMap = await buildDrumCellMap(mainBus, directoryHandle);
   await bindKeyToDrumCellMap(drumCellMap);
 };
+
+//엔트리 포인트: 웹페이지가 완전히 준비된 후 사용할 수 있도록
+const audioContext = new AudioContext();
+
+const onLoad = async () => {
+  const buttonE1 = document.getElementById('start-audio');
+  buttonE1.disabled = false;
+  buttonE1.addEventListener('click', async () => {
+    await initializeDrumMachine(audioContext);
+    audioContext.resume();
+    buttonE1.disabled = true;
+    buttonE1.textContent = '파일 로딩 완료';
+  }, false);
+};
+
+window.addEventListener('load', onLoad);
